@@ -2,6 +2,7 @@
 
 namespace Commander.API.Models
 {
+    // Model of the object as it exists in the db
     public class Command
     {
         [Key]

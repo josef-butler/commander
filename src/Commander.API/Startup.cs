@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using AutoMapper;
 
 namespace Commander.API
 {
@@ -31,7 +32,8 @@ namespace Commander.API
 
             services.AddControllers();
 
-            // services.AddScoped<ICommanderRepository, MockCommanderRepository>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddScoped<ICommanderRepository, SqlCommanderRepository>();
         }
 
