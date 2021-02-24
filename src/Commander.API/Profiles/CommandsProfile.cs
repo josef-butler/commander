@@ -8,8 +8,11 @@ namespace Commander.API.Profiles
     {
         public CommandsProfile()
         {
-            // Map an object's structure from source (Command) to destination (CommandReadDto). Where properties have the same name, AutoMapper will map them automatically
+            // Source -> Target
+            // Convert the Command from the db to CommandReadDto when retriving data from the db
             CreateMap<Command, CommandReadDto>();
+            // Convert the Dto from the client into a Command object when adding to the db
+            CreateMap<CommandCreateDto, Command>();
         }
     }
 }

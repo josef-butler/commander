@@ -22,9 +22,9 @@ namespace Commander.API.Controllers
             _mapper = mapper;
         }
 
-        // GET api/commands
+        // GET: api/commands
         [HttpGet]
-        public ActionResult <IEnumerable<CommandReadDto>> GetAllCommands()
+        public ActionResult<IEnumerable<CommandReadDto>> GetAllCommands()
         {
             var commandItems = _repository.GetAllCommands();
 
@@ -32,19 +32,40 @@ namespace Commander.API.Controllers
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commandItems));
         }
 
-        // GET api/commands/{id}
-        [HttpGet("{id}")]
-        public ActionResult <CommandReadDto> GetCommandById(int id)
+        // GET: api/commands/{id}
+        // This ActionResult is named so we can make use of it in the CreatedAtRoute method
+        [HttpGet("{id}", Name = "GetCommandById")]
+        public ActionResult<CommandReadDto> GetCommandById(int id)
         {
             var commandItem = _repository.GetCommandById(id);
 
-            if(commandItem != null)
+            if (commandItem != null)
             {
                 // Return a mapped Dto, not the object returned by the db query
                 return Ok(_mapper.Map<CommandReadDto>(commandItem));
             }
 
             return NotFound();
+        }
+
+        // POST: api/commands
+        [HttpPost]
+        public ActionResult<CommandReadDto> CreateCommand(CommandCreateDto commandCreateDto)
+        {
+            // Use Automapper to convert the Dto from the client into a Command model
+            var commandModel = _mapper.Map<Command>(commandCreateDto);
+
+            // Create the model in the repository, and save the changes to the db
+            _repository.CreateCommand(commandModel);
+            _repository.SaveChanges();
+
+            // Use Automapper to create the Dto to be passed back to the client based on the commandModel provided
+            var commandReadDto = _mapper.Map<CommandReadDto>(commandModel);
+
+            // Returns the commandReadDto with the URI to the newly created resource URI included in the header (utilising the GetCommandById ActionResult)
+            // This is important as part of the REST API spec of creating a new resource
+            // CreatedAtRoute will also return a 201 Created response
+            return CreatedAtRoute(nameof(GetCommandById), new { Id = commandReadDto.Id }, commandReadDto);
         }
     }
 }
