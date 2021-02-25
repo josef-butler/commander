@@ -8,6 +8,8 @@ A simple .NET Core API to store and retrieve CLI commands
 `GET /api/commands`
 
 #### Response
+* 200 for a successful response
+
 ```json
 [
     {
@@ -26,10 +28,11 @@ A simple .NET Core API to store and retrieve CLI commands
 ### Get a single command
 #### Request
 `GET /api/commands/{id}`
-* Returns a single command when given its id.
-* If there is no command with the specified Id, a `404 Not Found` will be returned.
 
 #### Response
+* 200 for a successful response
+* If there is no command with the specified Id, a `404 Not Found` will be returned.
+
 ```json
 {
     "id": 1,
@@ -51,6 +54,7 @@ A simple .NET Core API to store and retrieve CLI commands
 ```
 
 #### Response
+* 201 indicates success
 * URI to the newly created resource will be included as a header
 
 ```json
@@ -61,11 +65,9 @@ A simple .NET Core API to store and retrieve CLI commands
 }
 ```
 
-### Update an existing command
+### Update (put) an existing command
 #### Request
 `PUT /api/commands/{id}`
-* If a command is found and updated, a 204 is returned to indicate success
-* If a command is not found, a 404 is returned
 
 ```json
 {
@@ -74,6 +76,27 @@ A simple .NET Core API to store and retrieve CLI commands
     "line": "dotnet ef migrations add <Name of Migration>"
 }
 ```
+
+#### Response
+* If a command is found and updated, a 204 is returned to indicate success
+* If a command is not found, a 404 is returned
+
+### Update (patch) an existing command
+#### Request
+`PATCH /api/commands/{id}`
+```json
+[
+    {
+        "op": "replace",
+        "path": "/howto",
+        "value": "Some new value"
+    }
+]
+```
+
+#### Response
+* If a command is found and updated, a 204 is returned to indicate success
+* If a command is not found, a 404 is returned
 
 ## Status codes
 

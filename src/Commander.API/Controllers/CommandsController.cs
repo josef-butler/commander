@@ -3,6 +3,7 @@ using AutoMapper;
 using Commander.API.Data;
 using Commander.API.Dtos;
 using Commander.API.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Commander.API.Controllers
@@ -80,9 +81,47 @@ namespace Commander.API.Controllers
                 return NotFound();
             }
 
-            // If it does exist, update the model in the db. Automapper can update the commandModelFromRepository with the data sent from the client
+            // If it does exist, update the model in the db
+            // Automapper can update the commandModelFromRepository with the data sent from the client
             _mapper.Map(commandUpdateDto, commandModelFromRepository);
 
+            _repository.UpdateCommand(commandModelFromRepository);
+            _repository.SaveChanges();
+
+            // Once done, return a 204 to indicate the resource has been updated
+            return NoContent();
+        }
+
+        // PATCH: /api/commands/{id}
+        [HttpPatch("{id}")]
+        public ActionResult PartialCommandUpdate(int id, JsonPatchDocument<CommandUpdateDto> patchDocument)
+        {
+            // Check to see if the model already exists. If not, return NotFound
+            var commandModelFromRepository = _repository.GetCommandById(id);
+
+            if (commandModelFromRepository == null)
+            {
+                return NotFound();
+            }
+
+            // If it does exist, update the model in the db
+            // Construct a Command Dto (commandToPatch) which we can apply the model from the db onto, using Automapper
+            var commandToPatch = _mapper.Map<CommandUpdateDto>(commandModelFromRepository);
+
+            // Apply data from the client's request to the Dto
+            patchDocument.ApplyTo(commandToPatch, ModelState);
+
+            // Perform some validation and return an error if it fails
+            if (!TryValidateModel(commandToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            // We then want to update the model data in our repository
+            // First, update the model to have the new changes
+            _mapper.Map(commandToPatch, commandModelFromRepository);
+
+            // Then update the command, and save the changes to the db
             _repository.UpdateCommand(commandModelFromRepository);
             _repository.SaveChanges();
 

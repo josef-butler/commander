@@ -8,15 +8,18 @@ namespace Commander.API.Profiles
     {
         public CommandsProfile()
         {
-            // Source -> Target
-            // Convert the Command from the db to CommandReadDto when retriving data from the db
+            // Source -> Target. Convert db model to Dto or vice versa, depending on use case
+            // Used for GET requests
             CreateMap<Command, CommandReadDto>();
             
-            // Convert the Dto from the client into a Command object when adding to the db
+            // Used for POST requests
             CreateMap<CommandCreateDto, Command>();
 
-            // Convert the Dto from the client into a Command object to update an existing model in the db
+            // Used for PUT requests
             CreateMap<CommandUpdateDto, Command>();
+
+            // Used for PATCH requests
+            CreateMap<Command, CommandUpdateDto>();
         }
     }
 }
