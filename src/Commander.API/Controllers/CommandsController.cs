@@ -67,5 +67,27 @@ namespace Commander.API.Controllers
             // CreatedAtRoute will also return a 201 Created response
             return CreatedAtRoute(nameof(GetCommandById), new { Id = commandReadDto.Id }, commandReadDto);
         }
+
+        // PUT: /api/commands/{id}
+        [HttpPut("{id}")]
+        public ActionResult UpdateCommand(int id, CommandUpdateDto commandUpdateDto)
+        {
+            // Check to see if the model already exists. If not, return NotFound
+            var commandModelFromRepository = _repository.GetCommandById(id);
+
+            if (commandModelFromRepository == null)
+            {
+                return NotFound();
+            }
+
+            // If it does exist, update the model in the db. Automapper can update the commandModelFromRepository with the data sent from the client
+            _mapper.Map(commandUpdateDto, commandModelFromRepository);
+
+            _repository.UpdateCommand(commandModelFromRepository);
+            _repository.SaveChanges();
+
+            // Once done, return a 204 to indicate the resource has been updated
+            return NoContent();
+        }
     }
 }

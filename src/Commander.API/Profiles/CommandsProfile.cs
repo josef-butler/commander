@@ -11,8 +11,12 @@ namespace Commander.API.Profiles
             // Source -> Target
             // Convert the Command from the db to CommandReadDto when retriving data from the db
             CreateMap<Command, CommandReadDto>();
+            
             // Convert the Dto from the client into a Command object when adding to the db
             CreateMap<CommandCreateDto, Command>();
+
+            // Convert the Dto from the client into a Command object to update an existing model in the db
+            CreateMap<CommandUpdateDto, Command>();
         }
     }
 }

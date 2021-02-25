@@ -38,5 +38,10 @@ namespace Commander.API.Data
         {
             return (_context.SaveChanges() >= 0);
         }
+
+        public void UpdateCommand(Command command)
+        {
+            // Nothing needs to be added here as it's taken care of by the db context
+        }
     }
 }
