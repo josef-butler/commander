@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AutoMapper;
 using Newtonsoft.Json.Serialization;
+using Microsoft.OpenApi.Models;
 
 namespace Commander.API
 {
@@ -37,6 +38,21 @@ namespace Commander.API
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Commander API",
+                    Description = "A simple .NET Core Web API for storing CLI commands",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Joe Butler",
+                        Email = "joe@joebutler.dev",
+                    }
+                });
+            });
+
             services.AddScoped<ICommanderRepository, SqlCommanderRepository>();
         }
 
@@ -46,6 +62,13 @@ namespace Commander.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("./swagger/v1/swagger.json", "Commander API v1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
 
