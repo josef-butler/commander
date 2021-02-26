@@ -128,5 +128,25 @@ namespace Commander.API.Controllers
             // Once done, return a 204 to indicate the resource has been updated
             return NoContent();
         }
+
+        // DELETE: /api/commands/{id}
+        [HttpDelete("{id}")]
+        public ActionResult DeleteCommand(int id)
+        {
+            // Check to see if the model already exists. If not, return NotFound
+            var commandModelFromRepository = _repository.GetCommandById(id);
+
+            if (commandModelFromRepository == null)
+            {
+                return NotFound();
+            }
+
+            // If it does exist, delete the command from context and save to the db
+            _repository.DeleteCommand(commandModelFromRepository);
+            _repository.SaveChanges();
+
+            // Once done, return a 204 to indicate the resource has been deleted
+            return NoContent();
+        }
     }
 }

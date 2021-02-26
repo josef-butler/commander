@@ -95,8 +95,17 @@ A simple .NET Core API to store and retrieve CLI commands
 ```
 
 #### Response
-* If a command is found and updated, a 204 is returned to indicate success
-* If a command is not found, a 404 is returned
+* 204 if the command is successfully updated
+* 400 for a bad request
+* 404 if the command is not found
+
+### Delete a command
+#### Request
+`DELETE /api/commands/{id}`
+
+#### Response
+* 204 if the command is successfully deleted
+* 404 if the command is not found
 
 ## Status codes
 
